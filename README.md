@@ -2,7 +2,7 @@
 
 [![MELPA](http://melpa.org/packages/git-link-badge.svg)](http://melpa.org/#/git-link)
 
-Interactive Emacs functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
+Interactive Emacs functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/Sourcegraph/... repositories.
 
 `git-link` returns the URL for the current buffer's file location at the current line number or active region.
 
@@ -65,6 +65,7 @@ Name of the remote branch to link to.
 * [GitHub](http://github.com)
 * [GitLab](https://gitlab.com)
 * [Gitorious](http://gitorious.org)
+* [Sourcegraph](https://sourcegraph.com)
 
 ### Git Timemachine
 
@@ -114,3 +115,16 @@ The `git-link-commit` signature is:
 * Tests!
 * Consolidate `git-link-*-alist`s
 * `git-link-grep`
+
+########### TEMP SOURCEGRAPH INSTRUCTIONS
+
+Download the git-link.el file to `~/.emacs.d/personal` and add the following to your emacs init file:
+
+``` emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/personal")
+(require 'git-link)
+```
+
+Restart emacs
+
+Press M-s (hotkey) or `M-x git-link` to open the current file point or region on Sourcegraph.com.

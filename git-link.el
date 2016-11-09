@@ -1,4 +1,4 @@
-;;; git-link.el --- Get the GitHub/Bitbucket/GitLab URL for a buffer location
+;;; git-link.el --- Get the GitHub/Bitbucket/GitLab/Sourcegraph URL for a buffer location
 
 ;; Author: Skye Shaw <skye.shaw@gmail.com>
 ;; Version: 0.4.5
@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;; Create URLs for files and commits in GitHub/Bitbucket/GitLab/...
+;; Create URLs for files and commits in GitHub/Bitbucket/GitLab...
 ;; repositories. `git-link' returns the URL for the current buffer's file
 ;; location at the current line number or active region. `git-link-commit'
 ;; returns the URL for a commit. URLs are added to the kill ring.
@@ -33,6 +33,9 @@
 
 ;;; Change Log:
 
+;; 2016-10-19 - v0.5.0
+;; * Support for generating Sourcegraph mirror URLs for GitHub repositories
+;;
 ;; 2016-10-19 - v0.4.5
 ;; * Fix for branches containing reserved URLs characters (Issue #36)
 ;;
@@ -282,6 +285,16 @@
 	  dirname
 	  commit))
 
+(defun git-link-sourcegraph (hostname dirname filename branch commit start end)
+  (format "https://sourcegraph.com/%s/%s@%s/-/blob/%s#%s"
+		  hostname
+		  dirname
+		  (or branch commit)
+		  filename
+		  (if end
+			  (format "L%s-%s" start end)
+			(format "L%s" start))))
+
 (defun git-link-bitbucket (hostname dirname filename branch commit start end)
   ;; ?at=branch-name
   (format "https://%s/%s/src/%s/%s#%s-%s"
@@ -309,7 +322,7 @@
 ;;;###autoload
 (defun git-link (remote start end)
   "Create a URL representing the current buffer's location in its
-GitHub/Bitbucket/GitLab/... repository at the current line number
+GitHub/Bitbucket/GitLab/Sourcegraph/... repository at the current line number
 or active region. The URL will be added to the kill ring. If
 `git-link-open-in-browser' is non-`nil' also call `browse-url'.
 
@@ -346,7 +359,7 @@ Defaults to \"origin\"."
 ;;;###autoload
 (defun git-link-commit (remote)
   "Create a URL representing the commit for the hash under point
-in the current buffer's GitHub/Bitbucket/GitLab/...
+in the current buffer's GitHub/Bitbucket/GitLab/Sourcegraph/...
 repository. The URL will be added to the kill ring.
 
 With a prefix argument prompt for the remote's name.
@@ -384,3 +397,13 @@ is non-`nil' also call `browse-url'."
 
 (provide 'git-link)
 ;;; git-link.el ends here
+
+;;;;;;;;;;; HACK to make it always open up sourcegraph
+;;;;;;; TODO(sqs): we will submit a proper PR upstream with this nicely factored out soon
+
+(eval-after-load "git-link"
+  '(progn
+	 (setq git-link-open-in-browser t)
+	 (add-to-list 'git-link-remote-alist
+				  '("github.com" git-link-sourcegraph))
+	 (global-set-key (kbd "M-s") 'git-link)))
