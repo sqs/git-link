@@ -286,7 +286,7 @@
 	  commit))
 
 (defun git-link-sourcegraph (hostname dirname filename branch commit start end)
-  (format "https://sourcegraph.com/%s/%s@%s/-/blob/%s#%s?_event=ExploreAtCursor"
+  (format "https://sourcegraph.com/%s/%s@%s/-/blob/%s?_event=ExploreAtCursor#%s"
 		  hostname
 		  dirname
 		  (or branch commit)
